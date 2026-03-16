@@ -1,2 +1,2 @@
 # CEGC
-entro de Estudio de Gestion de la Calidad
+Centro de Estudio de Gestion de la Calidad 
