@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maestría Gestión para la Calidad · UC Camagüey</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --ink:    #0E0E0E;
+  --paper:  #F5F0E8;
+  --paper2: #EDE6D6;
+  --rust:   #C4501A;
+  --rust2:  #E8693A;
+  --sage:   #4A6741;
+  --slate:  #2C3E50;
+  --warm:   #8B7355;
+  --cream:  #FAF7F2;
+}
+
+body {
+  font-family: 'Syne', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+.cursor {
+  width: 10px; height: 10px;
+  background: var(--rust);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, background 0.2s;
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  border: 1.5px solid var(--rust);
+  border-radius: 50%;
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: left 0.06s ease-out, top 0.06s ease-out, width 0.25s, height 0.25s;
+  opacity: 0.6;
+}
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 3rem;
+  height: 64px;
+  background: rgba(245, 240, 232, 0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(14,14,14,0.08);
+}
+
+.nav-logo {
+  display: flex; align-items: center; gap: 14px;
+  cursor: none; text-decoration: none;
+}
+.logo-mark {
+  width: 34px; height: 34px;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; font-weight: 700; color: var(--paper);
+  clip-path: polygon(0 0, 100% 0, 100% 75%, 75% 100%, 0 100%);
+}
+.logo-text { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); line-height: 1.3; }
+.logo-text span { display: block; font-weight: 400; color: var(--warm); font-size: 10px; }
+
+.nav-links { display: flex; align-items: center; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink); text-decoration: none; opacity: 0.45;
+  transition: opacity 0.2s; cursor: none;
+}
+.nav-links a:hover { opacity: 1; }
+.nav-cta-link {
+  background: var(--ink) !important; color: var(--paper) !important;
+  opacity: 1 !important; padding: 9px 20px;
+}
+.nav-cta-link:hover { background: var(--rust) !important; }
+
+.page { display: none; min-height: 100vh; padding-top: 64px; }
+.page.active { display: block; }
+
+/* HERO */
+.hero {
+  min-height: calc(100vh - 64px);
+  display: grid; grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+.hero-left {
+  background: var(--ink);
+  padding: 5rem 4rem 4rem;
+  display: flex; flex-direction: column; justify-content: space-between;
+  position: relative; overflow: hidden;
+}
+.hero-left::before {
+  content: '';
+  position: absolute; top: -100px; left: -100px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(196,80,26,0.18) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: 0.15em; color: var(--rust2); opacity: 0.8;
+  margin-bottom: 2.5rem;
+}
+.hero-headline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.2rem, 5.5vw, 5.2rem);
+  font-weight: 300; line-height: 1.02;
+  color: var(--paper); letter-spacing: -0.02em;
+}
+.hero-headline strong {
+  font-weight: 700; font-style: italic;
+  color: var(--rust2); display: block;
+}
+.hero-body-text {
+  margin-top: 2.5rem; font-size: 14px; line-height: 1.8;
+  color: rgba(245,240,232,0.5); max-width: 380px; font-weight: 300;
+}
+.hero-ctas { display: flex; gap: 1rem; margin-top: 3rem; flex-wrap: wrap; }
+.btn-hero {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 14px 28px; border: none; cursor: none; text-decoration: none;
+  display: inline-block; transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.btn-hero:hover { transform: translateY(-2px); }
+.btn-hero-solid { background: var(--rust); color: var(--paper); }
+.btn-hero-solid:hover { background: var(--rust2); box-shadow: 0 12px 32px rgba(196,80,26,0.4); }
+.btn-hero-ghost { background: transparent; color: var(--paper); border: 1px solid rgba(245,240,232,0.25); }
+.btn-hero-ghost:hover { border-color: rgba(245,240,232,0.7); }
+
+.hero-bottom {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid rgba(245,240,232,0.08); margin-top: 4rem;
+}
+.hero-stat { padding: 1.5rem 0; border-right: 1px solid rgba(245,240,232,0.08); }
+.hero-stat:not(:first-child) { padding-left: 1.5rem; }
+.hero-stat:last-child { border-right: none; }
+.hero-stat .num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem; font-weight: 700; color: var(--paper); line-height: 1; letter-spacing: -2px;
+}
+.hero-stat .num sup { font-size: 1.2rem; vertical-align: super; }
+.hero-stat .label { font-size: 11px; color: rgba(245,240,232,0.35); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+
+.hero-right {
+  background: var(--paper2); position: relative;
+  overflow: hidden; display: flex; flex-direction: column;
+}
+.hero-right-top { flex: 1; padding: 4rem 3rem 2rem; position: relative; }
+.hero-deco-letter {
+  position: absolute; top: -2rem; right: -1rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22rem; font-weight: 700; line-height: 1;
+  color: rgba(14,14,14,0.04); pointer-events: none; user-select: none;
+}
+.info-card {
+  background: var(--cream); border: 1px solid rgba(14,14,14,0.08);
+  padding: 2rem; position: relative; z-index: 1;
+}
+.info-card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--rust); margin-bottom: 1.5rem;
+}
+.info-rows { display: flex; flex-direction: column; }
+.info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.85rem 0; border-bottom: 1px solid rgba(14,14,14,0.07); font-size: 13px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-row .key { color: var(--warm); font-weight: 400; font-size: 12px; }
+.info-row .val { font-weight: 600; color: var(--ink); text-align: right; }
+
+.hero-image-block {
+  height: 280px; background: var(--slate);
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.abs-shape { position: absolute; border-radius: 50%; }
+.s1 { width:400px;height:400px; background:radial-gradient(circle,rgba(196,80,26,0.35) 0%,transparent 65%); top:-100px;right:-100px; }
+.s2 { width:300px;height:300px; background:radial-gradient(circle,rgba(74,103,65,0.3) 0%,transparent 65%); bottom:-80px;left:-60px; }
+.s3 { width:200px;height:200px; background:radial-gradient(circle,rgba(245,240,232,0.08) 0%,transparent 65%); top:50%;left:50%;transform:translate(-50%,-50%); }
+.hero-img-inner { position:relative;z-index:1;text-align:center; }
+.big-year { font-family:'Cormorant Garamond',serif;font-size:7rem;font-weight:700;color:rgba(245,240,232,0.07);line-height:1;letter-spacing:-6px;display:block; }
+.tagline { font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-style:italic;color:rgba(245,240,232,0.55);display:block;margin-top:-1.5rem; }
+
+/* PAGE HEADERS */
+.page-header {
+  padding: 5rem 5rem 3rem;
+  display: grid; grid-template-columns: 1fr auto; align-items: end;
+  border-bottom: 1px solid rgba(14,14,14,0.1); position: relative;
+}
+.page-header::before { content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--rust); }
+.ph-index { font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--rust);margin-bottom:1rem; }
+.ph-title { font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,5vw,4.5rem);font-weight:300;line-height:1.05;letter-spacing:-0.02em; }
+.ph-title em { font-style:italic;color:var(--rust); }
+.ph-right { font-family:'Cormorant Garamond',serif;font-size:8rem;font-weight:700;color:rgba(14,14,14,0.04);line-height:1;letter-spacing:-6px;user-select:none;padding-bottom:0.5rem; }
+.ph-sub { font-size:14px;color:var(--warm);max-width:500px;line-height:1.7;margin-top:1rem;font-weight:300; }
+.content-area { padding: 4rem 5rem; }
+
+/* SOBRE */
+.sobre-grid { display:grid;grid-template-columns:1.2fr 1fr;gap:5rem;align-items:start; }
+.sobre-lead { font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;line-height:1.5;letter-spacing:-0.01em;color:var(--ink);margin-bottom:2.5rem; }
+.sobre-lead em { font-style:italic;color:var(--rust); }
+.sobre-body { font-size:14px;color:var(--warm);line-height:1.85;font-weight:300; }
+.sobre-body p { margin-bottom:1.25rem; }
+.feature-item { padding:1.75rem 0;border-bottom:1px solid rgba(14,14,14,0.08);display:grid;grid-template-columns:40px 1fr;gap:1.25rem;align-items:start; }
+.feature-num { font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--rust);letter-spacing:0.05em;padding-top:3px; }
+.feature-content h4 { font-size:15px;font-weight:600;color:var(--ink);margin-bottom:0.4rem; }
+.feature-content p { font-size:13px;color:var(--warm);line-height:1.65;font-weight:300; }
+
+/* PLAN */
+.plan-grid { display:grid;grid-template-columns:220px 1fr;gap:3rem; }
+.plan-tabs { display:flex;flex-direction:column;gap:2px; }
+.plan-tab {
+  padding:1.25rem 1.5rem;cursor:none;
+  border:none;border-left:2px solid transparent;
+  text-align:left;background:transparent;
+  transition:all 0.2s;
+}
+.plan-tab:hover { border-left-color:rgba(196,80,26,0.4);background:rgba(196,80,26,0.03); }
+.plan-tab.active { border-left-color:var(--rust);background:rgba(196,80,26,0.06); }
+.t-num { font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--rust);margin-bottom:3px; }
+.t-name { font-size:14px;font-weight:600;color:var(--ink); }
+.plan-content { display:none; }
+.plan-content.active { display:block; }
+.plan-content-header { margin-bottom:2rem; }
+.plan-content-header h3 { font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;color:var(--ink); }
+.plan-content-header p { font-size:13px;color:var(--warm);margin-top:0.5rem; }
+.mat-row { display:grid;grid-template-columns:1fr auto;align-items:center;padding:1.25rem 0;border-bottom:1px solid rgba(14,14,14,0.07);gap:2rem;transition:background 0.15s; }
+.mat-row:hover { background:rgba(196,80,26,0.03);margin:0 -1rem;padding-left:1rem;padding-right:1rem; }
+.mat-row:last-child { border-bottom:none; }
+.mat-name { font-size:15px;font-weight:600;color:var(--ink);margin-bottom:3px; }
+.mat-type { font-size:12px;color:var(--warm); }
+.mat-credits { font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--rust);white-space:nowrap; }
+
+/* DOCENTES */
+.docentes-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(14,14,14,0.08); }
+.docente-card { background:var(--cream);padding:2.5rem 2rem;transition:background 0.2s;cursor:default; }
+.docente-card:hover { background:var(--paper2); }
+.doc-initials { font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:300;color:var(--rust);line-height:1;margin-bottom:1.5rem;letter-spacing:-3px; }
+.doc-name { font-size:15px;font-weight:600;color:var(--ink);margin-bottom:4px;line-height:1.3; }
+.doc-title { font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--rust);text-transform:uppercase;margin-bottom:1rem; }
+.doc-bio { font-size:13px;color:var(--warm);line-height:1.65;font-weight:300; }
+
+/* ADMISION */
+.admision-layout { display:grid;grid-template-columns:1fr 1fr;gap:5rem; }
+.req-group-title { font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--rust);margin-bottom:1.25rem;padding-bottom:0.75rem;border-bottom:1px solid rgba(14,14,14,0.1); }
+.req-item { display:flex;gap:12px;padding:0.85rem 0;border-bottom:1px solid rgba(14,14,14,0.05);font-size:14px;line-height:1.5;align-items:flex-start; }
+.req-item:last-child { border-bottom:none; }
+.req-dash { font-family:'JetBrains Mono',monospace;color:var(--rust);font-size:14px;margin-top:1px;flex-shrink:0; }
+.conv-banner { background:var(--ink);padding:2rem;margin-top:2.5rem;display:flex;justify-content:space-between;align-items:center; }
+.conv-label { font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(245,240,232,0.4);margin-bottom:6px; }
+.conv-date { font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--paper);font-weight:600; }
+.conv-badge { background:var(--rust);color:var(--paper);font-size:11px;font-weight:600;letter-spacing:0.08em;padding:8px 16px;text-transform:uppercase; }
+
+.form-panel { background:var(--cream);padding:2.5rem;border:1px solid rgba(14,14,14,0.08); }
+.form-panel-title { font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:400;margin-bottom:0.4rem; }
+.form-panel-sub { font-size:13px;color:var(--warm);margin-bottom:2rem;font-weight:300; }
+.fg { margin-bottom:1.1rem; }
+.fg label { display:block;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);opacity:0.5;margin-bottom:6px; }
+.fg input,.fg select,.fg textarea { width:100%;background:var(--paper);border:1px solid rgba(14,14,14,0.12);padding:11px 14px;font-family:'Syne',sans-serif;font-size:14px;color:var(--ink);outline:none;transition:border-color 0.2s,box-shadow 0.2s;appearance:none; }
+.fg input:focus,.fg select:focus,.fg textarea:focus { border-color:var(--rust);box-shadow:0 0 0 3px rgba(196,80,26,0.1); }
+.fg textarea { resize:vertical;min-height:80px; }
+.form-row2 { display:grid;grid-template-columns:1fr 1fr;gap:1rem; }
+.form-btn { width:100%;margin-top:0.5rem;background:var(--ink);color:var(--paper);border:none;padding:15px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:none;transition:background 0.2s; }
+.form-btn:hover { background:var(--rust); }
+.success-msg { display:none;padding:1.5rem;text-align:center;background:rgba(74,103,65,0.08);border:1px solid rgba(74,103,65,0.3);font-size:14px;color:var(--sage); }
+
+/* BLOG */
+.blog-featured { display:grid;grid-template-columns:1.6fr 1fr;gap:1px;background:rgba(14,14,14,0.08);margin-bottom:1px; }
+.blog-card { background:var(--cream);cursor:none;transition:background 0.2s; }
+.blog-card:hover { background:var(--paper2); }
+.blog-main { padding:3rem; }
+.blog-side-stack { display:flex;flex-direction:column; }
+.blog-side-item { padding:2rem;border-bottom:1px solid rgba(14,14,14,0.08);flex:1; }
+.blog-cat-tag { font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--rust);margin-bottom:1rem; }
+.blog-title { font-family:'Cormorant Garamond',serif;font-weight:400;color:var(--ink);line-height:1.25;margin-bottom:1rem; }
+.blog-main .blog-title { font-size:2rem; }
+.blog-side-item .blog-title { font-size:1.2rem; }
+.blog-excerpt { font-size:14px;color:var(--warm);line-height:1.7;font-weight:300;margin-bottom:1.5rem; }
+.blog-meta { font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(14,14,14,0.3);letter-spacing:0.08em; }
+.blog-grid-lower { display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(14,14,14,0.08); }
+.blog-grid-lower .blog-card { padding:2rem; }
+
+/* CONTACTO */
+.contacto-layout { display:grid;grid-template-columns:1fr 1.4fr;gap:5rem; }
+.contact-intro { font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;line-height:1.4;letter-spacing:-0.01em;margin-bottom:3rem; }
+.contact-intro em { font-style:italic;color:var(--rust); }
+.cd-item { padding:1.25rem 0;border-bottom:1px solid rgba(14,14,14,0.08);display:grid;grid-template-columns:100px 1fr;gap:1rem;align-items:start; }
+.cd-label { font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--rust);padding-top:2px; }
+.cd-val { font-size:14px;color:var(--ink);line-height:1.5; }
+
+footer { background:var(--ink);padding:2.5rem 5rem;display:flex;align-items:center;justify-content:space-between; }
+.footer-left { font-family:'Cormorant Garamond',serif;font-size:1rem;color:rgba(245,240,232,0.35); }
+.footer-right { font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.1em;color:var(--rust2); }
+
+@keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+.a1{animation:fadeUp .7s .0s ease both}
+.a2{animation:fadeUp .7s .15s ease both}
+.a3{animation:fadeUp .7s .3s ease both}
+.a4{animation:fadeUp .7s .45s ease both}
+.a5{animation:fadeUp .7s .6s ease both}
+
+@media(max-width:1024px){
+  .hero{grid-template-columns:1fr}
+  .hero-right{display:none}
+  .sobre-grid,.admision-layout,.contacto-layout,.plan-grid{grid-template-columns:1fr}
+  .docentes-grid{grid-template-columns:1fr 1fr}
+  .blog-featured{grid-template-columns:1fr}
+  .blog-grid-lower{grid-template-columns:1fr 1fr}
+  .content-area,.page-header{padding:3rem 2rem}
+  nav{padding:0 1.5rem}
+  .nav-links{gap:1.5rem}
+  footer{padding:2rem;flex-direction:column;gap:.5rem;text-align:center}
+}
+</style>
+</head>
+<body>
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curR"></div>
+
+<nav>
+  <a class="nav-logo" onclick="go('home')">
+    <div class="logo-mark">UC</div>
+    <div class="logo-text">Gestión para la Calidad<span>Universidad de Camagüey</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#" onclick="go('sobre')">La Maestría</a></li>
+    <li><a href="#" onclick="go('plan')">Plan de Estudios</a></li>
+    <li><a href="#" onclick="go('docentes')">Docentes</a></li>
+    <li><a href="#" onclick="go('blog')">Noticias</a></li>
+    <li><a href="#" onclick="go('contacto')">Contacto</a></li>
+    <li><a href="#" class="nav-cta-link" onclick="go('admision')">Inscribirse</a></li>
+  </ul>
+</nav>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <section class="hero">
+    <div class="hero-left">
+      <div>
+        <p class="hero-eyebrow a1">— Universidad de Camagüey · Posgrado 2026</p>
+        <h1 class="hero-headline a2">Maestría en<strong>Gestión para<br>la Calidad</strong>Educacional y<br>Empresarial</h1>
+        <p class="hero-body-text a3">Forma directivos y académicos con capacidad real de transformar organizaciones a través de la investigación aplicada y la mejora continua.</p>
+        <div class="hero-ctas a4">
+          <a href="#" class="btn-hero btn-hero-solid" onclick="go('admision')">Solicitar Inscripción</a>
+          <a href="#" class="btn-hero btn-hero-ghost" onclick="go('sobre')">Ver el Programa</a>
+        </div>
+      </div>
+      <div class="hero-bottom a5">
+        <div class="hero-stat"><div class="num">15<sup>+</sup></div><div class="label">Años de historia</div></div>
+        <div class="hero-stat"><div class="num">300<sup>+</sup></div><div class="label">Egresados</div></div>
+        <div class="hero-stat"><div class="num">4</div><div class="label">Semestres</div></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-right-top">
+        <div class="hero-deco-letter">GC</div>
+        <div class="info-card a2">
+          <div class="info-card-label">// Información del Programa</div>
+          <div class="info-rows">
+            <div class="info-row"><span class="key">Modalidad</span><span class="val">Presencial · Semipresencial</span></div>
+            <div class="info-row"><span class="key">Duración</span><span class="val">2 años · 4 semestres</span></div>
+            <div class="info-row"><span class="key">Titulación</span><span class="val">Máster en Ciencias</span></div>
+            <div class="info-row"><span class="key">Próxima conv.</span><span class="val">Septiembre 2026</span></div>
+            <div class="info-row"><span class="key">Idioma</span><span class="val">Español</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-image-block">
+        <div class="abs-shape s1"></div><div class="abs-shape s2"></div><div class="abs-shape s3"></div>
+        <div class="hero-img-inner">
+          <span class="big-year">2026</span>
+          <span class="tagline">"Calidad que transforma"</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer><div class="footer-left">© 2026 Universidad de Camagüey Ignacio Agramonte Loynaz</div><div class="footer-right">Developed by Raccoon Soft Lab</div></footer>
+</div>
+
+<!-- SOBRE -->
+<div id="page-sobre" class="page">
+  <div class="page-header">
+    <div><div class="ph-index">// 01 — La Maestría</div><h1 class="ph-title">Sobre el <em>Programa</em></h1><p class="ph-sub">Un programa de posgrado diseñado para transformar la gestión de la calidad en organizaciones cubanas y latinoamericanas.</p></div>
+    <div class="ph-right">01</div>
+  </div>
+  <div class="content-area">
+    <div class="sobre-grid">
+      <div>
+        <p class="sobre-lead">Un programa que <em>investiga, diseña e implementa</em> soluciones reales en contextos educativos y empresariales.</p>
+        <div class="sobre-body">
+          <p>La Maestría nació de la necesidad de formar profesionales capaces de liderar procesos de mejora continua con una perspectiva estratégica y científica.</p>
+          <p>El programa integra los enfoques más avanzados —sistemas normalizados ISO, Lean, Six Sigma, evaluación institucional— con una metodología de investigación rigurosa que garantiza la aplicabilidad de cada proyecto de tesis.</p>
+          <p>Más de 300 egresados avalan quince años de impacto real en empresas, instituciones educativas y organismos del Estado cubano.</p>
+        </div>
+      </div>
+      <div>
+        <div class="feature-item"><div class="feature-num">01</div><div class="feature-content"><h4>Investigación Aplicada</h4><p>Cada tesis aborda un problema real. Los resultados no quedan en el papel: se implementan en organizaciones reales.</p></div></div>
+        <div class="feature-item"><div class="feature-num">02</div><div class="feature-content"><h4>Claustro de Alto Nivel</h4><p>Doctores en ciencias con experiencia en consultoría, acreditación y certificación ISO en Cuba y el exterior.</p></div></div>
+        <div class="feature-item"><div class="feature-num">03</div><div class="feature-content"><h4>Doble Contexto</h4><p>Única maestría en la región que integra calidad educacional y empresarial en un solo programa cohesionado.</p></div></div>
+        <div class="feature-item"><div class="feature-num">04</div><div class="feature-content"><h4>Red de Egresados</h4><p>Comunidad activa de más de 300 profesionales en cargos de dirección en todo el país.</p></div></div>
+      </div>
+    </div>
+  </div>
+  <footer><div class="footer-left">© 2026 Universidad de Camagüey Ignacio Agramonte Loynaz</div><div class="footer-right">Developed by Raccoon Soft Lab</div></footer>
+</div>
+
+<!-- PLAN -->
+<div id="page-plan" class="page">
+  <div class="page-header">
+    <div><div class="ph-index">// 02 — Académico</div><h1 class="ph-title">Plan de <em>Estudios</em></h1><p class="ph-sub">Cuatro semestres que combinan fundamentos teóricos, metodología y práctica en organizaciones reales.</p></div>
+    <div class="ph-right">02</div>
+  </div>
+  <div class="content-area">
+    <div class="plan-grid">
+      <div class="plan-tabs">
+        <button class="plan-tab active" onclick="showPlan(1,this)"><div class="t-num">Semestre 01</div><div class="t-name">Fundamentos</div></button>
+        <button class="plan-tab" onclick="showPlan(2,this)"><div class="t-num">Semestre 02</div><div class="t-name">Metodología</div></button>
+        <button class="plan-tab" onclick="showPlan(3,this)"><div class="t-num">Semestre 03</div><div class="t-name">Especialización</div></button>
+        <button class="plan-tab" onclick="showPlan(4,this)"><div class="t-num">Semestre 04</div><div class="t-name">Tesis Final</div></button>
+      </div>
+      <div>
+        <div class="plan-content active" id="p1">
+          <div class="plan-content-header"><h3>Fundamentos de la Calidad</h3><p>Bases conceptuales y herramientas esenciales.</p></div>
+          <div class="mat-row"><div><div class="mat-name">Fundamentos de la Gestión de la Calidad</div><div class="mat-type">Obligatoria · Teórico-práctica</div></div><div class="mat-credits">4 cr</div></div>
+          <div class="mat-row"><div><div class="mat-name">Epistemología y Metodología de la Investigación</div><div class="mat-type">Obligatoria · Teórica</div></div><div class="mat-credits">3 cr</div></div>
+          <div class="mat-row"><div><div class="mat-name">Sistemas Normalizados de Gestión (ISO 9001)</div><div class="mat-type">Obligatoria · Teórico-práctica</div></div><div class="mat-credits">4 cr</div></div>
+          <div class="mat-row"><div><div class="mat-name">Estadística Aplicada al Control de la Calidad</div><div class="mat-type">Obligatoria · Práctica</div></div><div class="mat-credits">3 cr</div></div>
+        </div>
+        <div class="plan-content" id="p2">
+          <div class="plan-content-header"><h3>Metodología e Intervención</h3><p>Herramientas de mejora continua y diseño de investigación.</p></div>
+          <div class="mat-row"><div><div class="mat-name">Gestión de la Calidad en la Educación Superior</div><div class="mat-type">Obligatoria · Teórico-práctica</div></div><div class="mat-credits">4 cr</div></div>
+          <div class="mat-row"><div><div class="mat-name">Herramientas de Mejora Continua (Lean, Six Sigma)</div><div class="mat-type">Obligatoria · Práctica</div></div><div class="mat-credits">4 cr</div></div>
+          <div class="mat-row"><div><div class="mat-name">Auditoría y Evaluación de la Calidad</div><div class="mat-type">Obligatoria · Teórico-práctica</div></div><div class="mat-credits">3 cr</div></div>
+          <div class="mat-row"><div><div class="mat-name">Diseño de la Investigación Científica</div><div class="mat-type">Obligatoria · Práctica</div></div><div class="mat-credits">2 cr</div></div>
+        </div>
+        <div class="plan-content" id="p3">
+          <div class="plan-content-header"><h3>Especialización y Profundización</h3><p>Optativas avanzadas y primer capítulo de tesis.</p></div>
+          <div class="mat-row"><div><div class="mat-name">Gestión Estratégica y Competitividad</div><div class="mat-type">Obligatoria · Teórica</div></div><div class="mat-credits">3 cr</div></div>
+          <div class="mat-row"><div><div class="mat-name">Acreditación Institucional y Evaluación Curricular</div><div class="mat-type">Optativa · Práctica</div></div><div class="mat-credits">3 cr</div></div>
+          <div class="mat-row"><div><div class="mat-name">Responsabilidad Social e ISO 26000</div><div class="mat-type">Optativa · Teórico-práctica</div></div><div class="mat-credits">2 cr</div></div>
+          <div class="mat-row"><div><div class="mat-name">Investigación Intermedia — Capítulo I</div><div class="mat-type">Obligatoria · Investigación</div></div><div class="mat-credits">4 cr</div></div>
+        </div>
+        <div class="plan-content" id="p4">
+          <div class="plan-content-header"><h3>Tesis de Maestría</h3><p>Desarrollo, defensa y publicación de resultados científicos originales.</p></div>
+          <div class="mat-row"><div><div class="mat-name">Tesis de Maestría — Desarrollo y Defensa</div><div class="mat-type">Obligatoria · Investigación</div></div><div class="mat-credits">12 cr</div></div>
+          <div class="mat-row"><div><div class="mat-name">Seminario de Presentación de Resultados</div><div class="mat-type">Obligatoria · Práctica</div></div><div class="mat-credits">2 cr</div></div>
+          <div class="mat-row"><div><div class="mat-name">Publicación Científica (artículo arbitrado)</div><div class="mat-type">Obligatoria · Investigación</div></div><div class="mat-credits">2 cr</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer><div class="footer-left">© 2026 Universidad de Camagüey Ignacio Agramonte Loynaz</div><div class="footer-right">Developed by Raccoon Soft Lab</div></footer>
+</div>
+
+<!-- DOCENTES -->
+<div id="page-docentes" class="page">
+  <div class="page-header">
+    <div><div class="ph-index">// 03 — Claustro</div><h1 class="ph-title">Cuerpo <em>Docente</em></h1><p class="ph-sub">Doctores en ciencias con trayectoria reconocida en investigación, consultoría y docencia universitaria.</p></div>
+    <div class="ph-right">03</div>
+  </div>
+  <div class="docentes-grid">
+    <div class="docente-card"><div class="doc-initials">MR</div><div class="doc-name">Dr.C. María Elena Rodríguez Pérez</div><div class="doc-title">// Directora del Programa</div><p class="doc-bio">Doctora en Ciencias Técnicas. Especialista en sistemas de gestión de la calidad e innovación educativa con más de 20 años de experiencia investigadora.</p></div>
+    <div class="docente-card"><div class="doc-initials">JG</div><div class="doc-name">Dr.C. Jorge Luis González Almeida</div><div class="doc-title">// Profesor Titular</div><p class="doc-bio">Doctor en Ciencias Económicas. Consultor certificado en normas ISO. Ha asesorado más de 40 organizaciones en procesos de certificación y mejora continua.</p></div>
+    <div class="docente-card"><div class="doc-initials">YC</div><div class="doc-name">Dr.C. Yolanda Castro Bermúdez</div><div class="doc-title">// Profesora Auxiliar</div><p class="doc-bio">Doctora en Ciencias Pedagógicas. Investigadora en evaluación institucional y acreditación universitaria. Miembro del Comité Científico de la JUCEI.</p></div>
+    <div class="docente-card"><div class="doc-initials">AM</div><div class="doc-name">Dr.C. Alexis Morales Fuentes</div><div class="doc-title">// Profesor Auxiliar</div><p class="doc-bio">Doctor en Ciencias Técnicas. Experto en Lean Manufacturing y Six Sigma aplicados al contexto empresarial cubano. Consultor externo activo.</p></div>
+    <div class="docente-card"><div class="doc-initials">RC</div><div class="doc-name">MSc. Rosa Inés Céspedes Varela</div><div class="doc-title">// Profesora Instructora</div><p class="doc-bio">Máster en Gestión Empresarial. Especialista en estadística aplicada y control de la calidad. Investigadora con publicaciones en revistas arbitradas.</p></div>
+    <div class="docente-card"><div class="doc-initials">OP</div><div class="doc-name">Dr.C. Orlando Pacheco Torres</div><div class="doc-title">// Profesor Titular</div><p class="doc-bio">Doctor en Ciencias Filosóficas. Especialista en epistemología y metodología científica. Autor de tres libros de texto publicados por Editorial Félix Varela.</p></div>
+  </div>
+  <footer><div class="footer-left">© 2026 Universidad de Camagüey Ignacio Agramonte Loynaz</div><div class="footer-right">Developed by Raccoon Soft Lab</div></footer>
+</div>
+
+<!-- ADMISIÓN -->
+<div id="page-admision" class="page">
+  <div class="page-header">
+    <div><div class="ph-index">// 04 — Ingreso</div><h1 class="ph-title">Admisión e <em>Inscripción</em></h1><p class="ph-sub">Conoce los requisitos y completa tu solicitud para la convocatoria Septiembre 2026.</p></div>
+    <div class="ph-right">04</div>
+  </div>
+  <div class="content-area">
+    <div class="admision-layout">
+      <div>
+        <div class="req-group-title">// Requisitos de Admisión</div>
+        <div class="req-item"><span class="req-dash">—</span>Título universitario de nivel superior (Licenciatura o equivalente)</div>
+        <div class="req-item"><span class="req-dash">—</span>Promedio académico mínimo de 4.0 en escala de 5 puntos</div>
+        <div class="req-item"><span class="req-dash">—</span>Mínimo 2 años de experiencia profesional relacionada</div>
+        <div class="req-item"><span class="req-dash">—</span>Carta de presentación del centro de trabajo</div>
+        <div class="req-item"><span class="req-dash">—</span>Dos cartas de recomendación académica o profesional</div>
+        <div class="req-item"><span class="req-dash">—</span>Curriculum vitae actualizado</div>
+        <div class="req-item"><span class="req-dash">—</span>Propuesta preliminar de tema de investigación (1 cuartilla)</div>
+        <div class="conv-banner">
+          <div><div class="conv-label">Próxima convocatoria</div><div class="conv-date">Septiembre 2026</div><div style="font-size:12px;color:rgba(245,240,232,0.4);margin-top:4px">Inscripciones: 1–30 junio 2026</div></div>
+          <div class="conv-badge">Plazas Limitadas</div>
+        </div>
+      </div>
+      <div>
+        <div class="form-panel">
+          <h3 class="form-panel-title">Solicitud de Inscripción</h3>
+          <p class="form-panel-sub">Completa el formulario y nos pondremos en contacto contigo.</p>
+          <div id="aForm">
+            <div class="form-row2"><div class="fg"><label>Nombre</label><input type="text" placeholder="Tu nombre"></div><div class="fg"><label>Apellidos</label><input type="text" placeholder="Tus apellidos"></div></div>
+            <div class="fg"><label>Correo electrónico</label><input type="email" placeholder="correo@ejemplo.com"></div>
+            <div class="fg"><label>Teléfono</label><input type="tel" placeholder="+53 5 xxx xxxx"></div>
+            <div class="fg"><label>Institución / Centro de trabajo</label><input type="text" placeholder="Nombre de la institución"></div>
+            <div class="fg"><label>Área de interés para la tesis</label><select><option value="">Seleccionar área...</option><option>Calidad en Educación Superior</option><option>Sistemas de Gestión ISO</option><option>Mejora Continua Empresarial</option><option>Acreditación Institucional</option><option>Otro</option></select></div>
+            <div class="fg"><label>Mensaje adicional</label><textarea placeholder="¿Tienes alguna pregunta o comentario?"></textarea></div>
+            <button class="form-btn" onclick="sub('aForm','aSuc')">Enviar Solicitud →</button>
+          </div>
+          <div class="success-msg" id="aSuc">✓ Solicitud recibida. Te contactaremos en los próximos días hábiles.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer><div class="footer-left">© 2026 Universidad de Camagüey Ignacio Agramonte Loynaz</div><div class="footer-right">Developed by Raccoon Soft Lab</div></footer>
+</div>
+
+<!-- BLOG -->
+<div id="page-blog" class="page">
+  <div class="page-header">
+    <div><div class="ph-index">// 05 — Actualidad</div><h1 class="ph-title">Noticias y <em>Novedades</em></h1><p class="ph-sub">Eventos académicos, convocatorias, resultados de investigación y vida del programa.</p></div>
+    <div class="ph-right">05</div>
+  </div>
+  <div style="padding:3rem 5rem">
+    <div class="blog-featured">
+      <div class="blog-card blog-main">
+        <div class="blog-cat-tag">// Convocatoria · 15 marzo 2026</div>
+        <h2 class="blog-title">Abierta la inscripción para la convocatoria 2026–2028</h2>
+        <p class="blog-excerpt">El período de inscripción estará abierto del 1 al 30 de junio de 2026. La maestría oferta un número limitado de plazas para garantizar la calidad del proceso formativo. Consulta los requisitos y completa tu formulario antes del cierre.</p>
+        <div class="blog-meta">15 · 03 · 2026</div>
+      </div>
+      <div class="blog-side-stack">
+        <div class="blog-card blog-side-item">
+          <div class="blog-cat-tag">// Logros · 2 feb 2026</div>
+          <h3 class="blog-title">Egresado obtiene Premio Nacional de Calidad 2025</h3>
+          <p class="blog-excerpt" style="font-size:13px">El Ing. Carlos Fuentes fue reconocido por el sistema de gestión implementado en AZCUBA.</p>
+          <div class="blog-meta">02 · 02 · 2026</div>
+        </div>
+        <div class="blog-card blog-side-item">
+          <div class="blog-cat-tag">// Evento · 20 ene 2026</div>
+          <h3 class="blog-title">IV Taller Internacional de Acreditación Universitaria</h3>
+          <p class="blog-excerpt" style="font-size:13px">Ponentes de Cuba, México y Colombia participarán los días 10 y 11 de abril.</p>
+          <div class="blog-meta">20 · 01 · 2026</div>
+        </div>
+      </div>
+    </div>
+    <div class="blog-grid-lower" style="margin-top:1px">
+      <div class="blog-card"><div style="padding:2rem"><div class="blog-cat-tag">// Publicación · dic 2025</div><h3 class="blog-title">Nuevo libro sobre normas ISO en organizaciones cubanas</h3><p class="blog-excerpt">El Dr.C. González publica su tercer libro, disponible en la Biblioteca Universitaria y en formato digital para estudiantes.</p><div class="blog-meta">08 · 12 · 2025</div></div></div>
+      <div class="blog-card"><div style="padding:2rem"><div class="blog-cat-tag">// Investigación · nov 2025</div><h3 class="blog-title">Resultados del proyecto de mejora en el sector salud</h3><p class="blog-excerpt">Estudiantes de la cohorte 2023 presentaron resultados implementados en el Hospital Provincial de Camagüey.</p><div class="blog-meta">15 · 11 · 2025</div></div></div>
+      <div class="blog-card"><div style="padding:2rem"><div class="blog-cat-tag">// Internacional · oct 2025</div><h3 class="blog-title">Convenio de colaboración con la Universidad de Holguín</h3><p class="blog-excerpt">Acuerdo de movilidad académica para intercambios de estudiantes y profesores entre ambas universidades.</p><div class="blog-meta">30 · 10 · 2025</div></div></div>
+    </div>
+  </div>
+  <footer style="margin-top:3rem"><div class="footer-left">© 2026 Universidad de Camagüey Ignacio Agramonte Loynaz</div><div class="footer-right">Developed by Raccoon Soft Lab</div></footer>
+</div>
+
+<!-- CONTACTO -->
+<div id="page-contacto" class="page">
+  <div class="page-header">
+    <div><div class="ph-index">// 06 — Contacto</div><h1 class="ph-title">Ponte en <em>Contacto</em></h1><p class="ph-sub">Respondemos de lunes a viernes de 8:00 am a 5:00 pm.</p></div>
+    <div class="ph-right">06</div>
+  </div>
+  <div class="content-area">
+    <div class="contacto-layout">
+      <div>
+        <p class="contact-intro">¿Tienes dudas sobre el programa, la admisión <em>o la vida universitaria</em>?</p>
+        <div class="cd-item"><div class="cd-label">Dirección</div><div class="cd-val">Circunvalante Norte, Camagüey, Cuba, CP 70100</div></div>
+        <div class="cd-item"><div class="cd-label">Teléfono</div><div class="cd-val">+53 32 261 111</div></div>
+        <div class="cd-item"><div class="cd-label">Correo</div><div class="cd-val">maestria.calidad@reduc.edu.cu</div></div>
+        <div class="cd-item"><div class="cd-label">Horario</div><div class="cd-val">Lunes a viernes · 8:00 am – 5:00 pm</div></div>
+        <div class="cd-item"><div class="cd-label">Respuesta</div><div class="cd-val">Menos de 48 horas hábiles</div></div>
+      </div>
+      <div>
+        <div class="form-panel">
+          <h3 class="form-panel-title">Envía un mensaje</h3>
+          <p class="form-panel-sub">Te responderemos a la brevedad posible.</p>
+          <div id="cForm">
+            <div class="form-row2"><div class="fg"><label>Nombre completo</label><input type="text" placeholder="Tu nombre"></div><div class="fg"><label>Correo electrónico</label><input type="email" placeholder="correo@ejemplo.com"></div></div>
+            <div class="fg"><label>Asunto</label><select><option>Información sobre admisión</option><option>Plan de estudios</option><option>Becas y financiamiento</option><option>Colaboración institucional</option><option>Otro</option></select></div>
+            <div class="fg"><label>Mensaje</label><textarea placeholder="Escribe tu consulta..." style="min-height:130px"></textarea></div>
+            <button class="form-btn" onclick="sub('cForm','cSuc')">Enviar Mensaje →</button>
+          </div>
+          <div class="success-msg" id="cSuc">✓ Mensaje enviado. Te responderemos pronto.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer><div class="footer-left">© 2026 Universidad de Camagüey Ignacio Agramonte Loynaz</div><div class="footer-right">Developed by Raccoon Soft Lab</div></footer>
+</div>
+
+<script>
+const cur = document.getElementById('cur');
+const curR = document.getElementById('curR');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px';
+  setTimeout(() => { curR.style.left = e.clientX + 'px'; curR.style.top = e.clientY + 'px'; }, 60);
+});
+document.querySelectorAll('a,button').forEach(el => {
+  el.addEventListener('mouseenter', () => { cur.style.width='18px';cur.style.height='18px';cur.style.background='#E8693A';curR.style.width='50px';curR.style.height='50px'; });
+  el.addEventListener('mouseleave', () => { cur.style.width='10px';cur.style.height='10px';cur.style.background='#C4501A';curR.style.width='36px';curR.style.height='36px'; });
+});
+
+function go(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showPlan(n, btn) {
+  document.querySelectorAll('.plan-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.plan-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('p' + n).classList.add('active');
+}
+
+function sub(formId, sucId) {
+  const f = document.getElementById(formId);
+  const s = document.getElementById(sucId);
+  f.style.transition = 'opacity 0.3s'; f.style.opacity = '0';
+  setTimeout(() => { f.style.display = 'none'; s.style.display = 'block'; }, 300);
+}
+</script>
+</body>
+</html>
